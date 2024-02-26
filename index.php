@@ -13,6 +13,8 @@
 <!-- TODO12: PHP: Execute um script que remova o conteúdo das tuplas da tabela 'produtos' -->
 <!-- TODO13: PHP: Execute um script que remova a tabela 'produtos' -->
 
+<!-- TODO14: PHP: Apresente um exemplo com chave estrangeira. 
+                  'produtos(id)' tal que 'id' eh chave primaria na tabela 'fornecedor'-->
 
 <!DOCTYPE html>
 <html lang="bzs">
@@ -60,14 +62,30 @@
 	?>
 	</div>
 
+	<!-- TODO14 -->
+	<div id="todo14">
+	<?php
+	echo "<h3>TODO14</h3><br>";
+
+	$res = $db->query("CREATE TABLE fornecedor( id int primary key not null, nome varchar(50) not null)");
+	if($res){
+		echo "<h3>CREATE: Criação da tabela 'fornecedor' realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO14: Erro na criação da tabela.</h3>";
+	}
+
+	
+	?>
+	</div>
+
 	<!-- TODO2 -->
 	<div id="todo2" >
 	<?php 
 	echo "<h3>TODO2</h3><br>";
 
-	$res = $db->query("CREATE TABLE produtos( id int primary key not null, nome varchar(50) not null)");
+	$res = $db->query("CREATE TABLE produtos( id int primary key not null, nome varchar(50) not null, id_fornecedor int not null, foreign key(id_fornecedor) references fornecedor(id))");
 	if($res){
-		echo "<h3>Tabela produtos criada com sucesso!</h3>";
+		echo "<h3>CREATE: Criação da tabela 'produtos' realizada com sucesso!</h3>";
 	} else {
 		echo "<h3>ERRO2: Erro na criacao da tabela produtos, OU a tabela já foi criada.</h3>";
 	}
@@ -132,8 +150,12 @@
 	<?php
 	echo "<h3>TODO5</h3><br>";
 
-	$res = $db->query("INSERT INTO produtos VALUES ( 1, 'Lápis')");
-	$res = $db->query("INSERT INTO produtos(id,nome) values ( 2, 'Borracha')");
+	$res = $db->query("INSERT INTO fornecedor VALUES ( 1, 'UTFPR1')");
+
+	$res = $db->query("INSERT INTO fornecedor VALUES ( 2, 'UTFPR2')");
+
+	$res = $db->query("INSERT INTO produtos VALUES ( 1, 'Lápis', 2)");
+	$res = $db->query("INSERT INTO produtos(id,nome,id_fornecedor) values ( 2, 'Borracha', 1)");
 	if($res){
 		echo "<h3>INSERT: Produto inserido com sucesso!</h3>";
 	} else {
@@ -153,11 +175,13 @@
 		$res->setFetchMode(PDO::FETCH_OBJ);
 
 		while( $tupla = $res->fetch() ){ //recupera uma linha por vez
+			echo '<h3>';
 			foreach($tupla as $coluna){
-				echo '<h3>' . $coluna . "</h3>";
+				echo $coluna . ", ";
 			}
-			echo '<br>';
+			echo '</h3><br>';
 		}
+
 		echo "<h3>SELECT: Consulta realizada com sucesso!</h3>";
 	} else {
 		echo "<h3>ERRO6: Erro na consulta.</h3>";
@@ -174,12 +198,16 @@
 	if($res){
 		$res->setFetchMode(PDO::FETCH_OBJ);
 
+		
 		while( $tupla = $res->fetch() ){ //recupera uma linha por vez
+			echo '<h3>';
 			foreach($tupla as $coluna){
-				echo '<h3>' . $coluna . "</h3>";
+				echo $coluna . ", ";
 			}
-			echo '<br>';
+			echo '</h3><br>';
 		}
+		
+
 		echo "<h3>SELECT: Consulta realizada com sucesso!</h3>";
 	} else {
 		echo "<h3>ERRO7: Erro na consulta.</h3>";
@@ -268,11 +296,13 @@
 		$res->setFetchMode(PDO::FETCH_OBJ);
 
 		while( $tupla = $res->fetch() ){ //recupera uma linha por vez
+			echo '<h3>';
 			foreach($tupla as $coluna){
-				echo '<h3>' . $coluna . "</h3>";
+				echo $coluna . ", ";
 			}
-			echo '<br>';
+			echo '</h3><br>';
 		}
+
 		echo "<h3>SELECT: Consulta realizada com sucesso!</h3>";
 	} else {
 		echo "<h3>ERRO11: Erro na consulta.</h3>";
@@ -301,14 +331,36 @@
 	<?php
 	echo "<h3>TODO13</h3><br>";
 
+	
 	$res = $db->query("drop table produtos");
 	if($res){
 		echo "<h3>DELETE: Remoção da tabela 'produtos' realizada com sucesso!</h3>";
 	} else {
-		echo "<h3>ERRO7: Erro na remoção da tabela.</h3>";
+		echo "<h3>ERRO13b: Erro na remoção da tabela.</h3>";
 	}
+
+	$res = $db->query("drop table fornecedor");
+	if($res){
+		echo "<h3>DELETE: Remoção da tabela 'fornecedor' realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO13a: Erro na remoção da tabela.</h3>";
+	}
+
+	$res = $db->query("drop view visaoDesc");
+	if($res){
+		echo "<h3>DELETE: Remoção da visao 'visaoDesc' realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO13c: Erro na remoção da visao.</h3>";
+	}
+
+	
+
+	
+
 	?>
 	</div>
+
+	
 
 
 </body>
