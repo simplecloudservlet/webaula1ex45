@@ -1,9 +1,17 @@
 <!-- TODO1: PHP: Execute um script que conecte com um banco de dados suportado no servidor -->
-<!-- TODO2: PHP: Execute um script que crie uma tabela 'produtos' -->
+<!-- TODO2: PHP: Execute um script que crie uma tabela 'produtos' com os seguintes campos: id, nome-->
 <!-- TODO3: PHP: Execute um script que liste as tabelas criadas -->
 <!-- TODO4: PHP: Execute um script que liste as colunas da tabela 'produtos' -->
 <!-- TODO5: PHP: Execute um script que insira um conteúdo na tabela 'produtos' -->
-<!-- TODO6: PHP: Execute um script que exiba o conteúdo das tuplas da tabela 'produtos' -->
+<!-- TODO6: PHP: Execute um script que exiba todas as colunas das tuplas da tabela 'produtos' -->
+<!-- TODO7: PHP: Execute um script que exiba apenas a coluna 'nome' das tuplas da tabela 'produtos' -->
+<!-- TODO8: PHP: Execute um script que exiba apenas a coluna 'nome' da tupla com 'id=1' da tabela 'produtos'  -->
+<!-- TODO9: PHP: Execute um script que exiba as tuplas ordenadas em ordem crescente pelo 'nome'  -->
+<!-- TODO10: PHP: Execute um script que crie uma visao (view) das tuplas ordenadas em ordem decrescente pelo 'nome'  -->
+<!-- TODO11: PHP: Execute um script que altere o nome da tupla que contem 'nome=Borracha' para 'nome=Caderno'  -->
+
+<!-- TODO12: PHP: Execute um script que remova o conteúdo das tuplas da tabela 'produtos' -->
+<!-- TODO13: PHP: Execute um script que remova a tabela 'produtos' -->
 
 
 <!DOCTYPE html>
@@ -28,9 +36,10 @@
 <body>
 
 	<!-- TODO1 -->
+	<div id="todo1" class="selecionado">
 	<?php
 
-	echo '<h3>Drivers BD:</h3>';
+	echo '<h3>Conexão com o BD</h3>';
 	
 	$DATABASE = "mysql";
 	$HOST = "localhost";
@@ -38,40 +47,66 @@
 	$USER = "lucio";
 	$PASSWORD = "root";
 
-	$db = new PDO("$DATABASE: host=$HOST; dbname=$DBNAME", $USER, $PASSWORD);
-	var_dump($db);
+	try {
+		$db = new PDO("$DATABASE: host=$HOST; dbname=$DBNAME", $USER, $PASSWORD); //Para o MySQL
+		var_dump($db);
+	} catch(PDOException $e){
+		echo '<h3>EXCEPTION1: ' . $e->getMessage();
+	}
+	
+	
+
+
 	?>
+	</div>
 
 	<!-- TODO2 -->
+	<div id="todo2" >
 	<?php 
-	$res = $db->query("create table produtos( id int primary key not null, nome varchar(50) not null)");
-	if($res){
-		echo "<h2>Tabela produtos criada com sucesso!</h2>";
-	} else {
-		echo "<h2>ERRO2: Erro na criacao da tabela produtos.</h2>";
-	}
+	echo "<h3>TODO2</h3><br>";
 
+	$res = $db->query("CREATE TABLE produtos( id int primary key not null, nome varchar(50) not null)");
+	if($res){
+		echo "<h3>Tabela produtos criada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO2: Erro na criacao da tabela produtos, OU a tabela já foi criada.</h3>";
+	}
 	?>
+	</div>
 
 	<!-- TODO3 -->
+	<div id="todo3" class="selecionado">
 	<?php
-	$res = $db->query("show tables;");
-	if($res){
-		$res->setFetchMode(PDO::FETCH_COLUMN, 0);
-		$vetor = $res->fetchAll();
+	echo "<h3>TODO3</h3><br>";
+
+	try {
+
+		$res = $db->query("SHOW TABLES");
+		if($res){
+			$res->setFetchMode(PDO::FETCH_COLUMN, 0);
+			$vetor = $res->fetchAll();
 		
-		foreach ($vetor as $tabela){
-			echo '<h3>' . $tabela . "</h3><br/>";
+			foreach ($vetor as $tabela){
+				echo '<h3>' . $tabela . "</h3><br/>";
+			}
+
+		} else {
+			echo "<h3>ERRO3: Erro na listagem das tabelas.</h3>";
 		}
 
-	} else {
-		echo "<h2>ERRO3: Erro na listagem das tabelas.</h2>";
+	} catch(PDOException $e){
+		echo '<h3>EXCEPTION3: ' . $e->getMessage();
 	}
+	
 	?>
+	</div>
 
 	<!-- TODO4 -->
+	<div id="todo4" >
 	<?php
-	$res = $db->query("show columns from produtos");
+	echo "<h3>TODO4</h3><br>";
+
+	$res = $db->query("SHOW COLUMNS FROM produtos");
 	if($res){
 		$res->setFetchMode(PDO::FETCH_COLUMN);
 		$vetor = $res->fetchAll();
@@ -86,26 +121,34 @@
 			echo '<br>';
 		}
 
-
 	} else {
 		echo "<h2>ERRO4: Erro na listagem das colunas da tabela.</h2>";
 	}
 	?>
+	</div>
 
 	<!-- TODO5 -->
+	<div id="todo5" class="selecionado">
 	<?php
-	$res = $db->query("insert into produtos values ( 1, 'Lápis')");
+	echo "<h3>TODO5</h3><br>";
+
+	$res = $db->query("INSERT INTO produtos VALUES ( 1, 'Lápis')");
+	$res = $db->query("INSERT INTO produtos(id,nome) values ( 2, 'Borracha')");
 	if($res){
-		echo "<h2>INSERT: Produto inserido com sucesso!</h2>";
+		echo "<h3>INSERT: Produto inserido com sucesso!</h3>";
 	} else {
-		echo "<h2>ERRO2: Erro na inserção do produto.</h2>";
+		echo "<h3>ERRO5: Erro na inserção do produto.</h3>";
 	}
 	?>
+	</div>
 
 
 	<!-- TODO6 -->
+	<div id="todo6">
 	<?php
-	$res = $db->query("select * from produtos");
+	echo "<h3>TODO6</h3><br>";
+
+	$res = $db->query("SELECT * FROM produtos");
 	if($res){
 		$res->setFetchMode(PDO::FETCH_OBJ);
 
@@ -115,13 +158,157 @@
 			}
 			echo '<br>';
 		}
-			
-		
-		echo "<h2>SELECT: Consulta realizada com sucesso!</h2>";
+		echo "<h3>SELECT: Consulta realizada com sucesso!</h3>";
 	} else {
-		echo "<h2>ERRO2: Erro na inserção do produto.</h2>";
+		echo "<h3>ERRO6: Erro na consulta.</h3>";
 	}
 	?>
+	</div>
+
+	<!-- TODO7 -->
+	<div id="todo7" class="selecionado">
+	<?php
+	echo "<h3>TODO7</h3><br>";
+
+	$res = $db->query("SELECT nome FROM produtos");
+	if($res){
+		$res->setFetchMode(PDO::FETCH_OBJ);
+
+		while( $tupla = $res->fetch() ){ //recupera uma linha por vez
+			foreach($tupla as $coluna){
+				echo '<h3>' . $coluna . "</h3>";
+			}
+			echo '<br>';
+		}
+		echo "<h3>SELECT: Consulta realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO7: Erro na consulta.</h3>";
+	}
+	?>
+	</div>
+
+
+	<!-- TODO8 -->
+	<div id="todo8">
+	<?php
+	echo "<h3>TODO8</h3><br>";
+
+	$res = $db->query("SELECT nome FROM produtos WHERE id=1");
+	if($res){
+		$res->setFetchMode(PDO::FETCH_OBJ);
+
+		while( $tupla = $res->fetch() ){ //recupera uma linha por vez
+			foreach($tupla as $coluna){
+				echo '<h3>' . $coluna . "</h3>";
+			}
+			echo '<br>';
+		}
+		echo "<h3>SELECT: Consulta realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO8: Erro na consulta.</h3>";
+	}
+	?>
+	</div>
+
+	<!-- TODO9 -->
+	<div id="todo9" class="selecionado">
+	<?php
+	echo "<h3>TODO9</h3><br>";
+
+	$res = $db->query("SELECT nome FROM produtos ORDER BY nome");
+	if($res){
+		$res->setFetchMode(PDO::FETCH_OBJ);
+
+		while( $tupla = $res->fetch() ){ //recupera uma linha por vez
+			foreach($tupla as $coluna){
+				echo '<h3>' . $coluna . "</h3>";
+			}
+			echo '<br>';
+		}
+		echo "<h3>SELECT: Consulta realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO9: Erro na consulta.</h3>";
+	}
+	?>
+	</div>
+
+	<!-- TODO10 -->
+	<div id="todo10">
+	<?php
+	echo "<h3>TODO10</h3><br>";
+
+	$res = $db->query("CREATE VIEW visaoDesc AS SELECT nome FROM produtos ORDER BY nome DESC");
+	$res = $db->query("SELECT nome FROM visaoDesc");
+
+	if($res){
+		$res->setFetchMode(PDO::FETCH_OBJ);
+
+		while( $tupla = $res->fetch() ){ //recupera uma linha por vez
+			foreach($tupla as $coluna){
+				echo '<h3>' . $coluna . "</h3>";
+			}
+			echo '<br>';
+		}
+		echo "<h3>SELECT: Consulta realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO10: Erro na consulta.</h3>";
+	}
+	?>
+	</div>
+
+	<!-- TODO11 -->
+	<div id="todo11" class="selecionado">
+	<?php
+	echo "<h3>TODO11</h3><br>";
+
+	$res = $db->query("UPDATE produtos SET nome='Caderno' WHERE nome='Borracha'");
+	$res = $db->query("SELECT * FROM produtos");
+
+	if($res){
+		$res->setFetchMode(PDO::FETCH_OBJ);
+
+		while( $tupla = $res->fetch() ){ //recupera uma linha por vez
+			foreach($tupla as $coluna){
+				echo '<h3>' . $coluna . "</h3>";
+			}
+			echo '<br>';
+		}
+		echo "<h3>SELECT: Consulta realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO11: Erro na consulta.</h3>";
+	}
+	?>
+	</div>
+
+
+
+	<!-- TODO12 -->
+	<div id="todo12" >
+	<?php
+	echo "<h3>TODO12</h3><br>";
+
+	$res = $db->query("delete from produtos where id > 0");
+	if($res){
+		echo "<h3>DELETE: Remoção das tuplas realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO12: Erro na remoção da tupla.</h3>";
+	}
+	?>
+	</div>
+
+	<!-- TODO13 -->
+	<div id="todo13" class="selecionado">
+	<?php
+	echo "<h3>TODO13</h3><br>";
+
+	$res = $db->query("drop table produtos");
+	if($res){
+		echo "<h3>DELETE: Remoção da tabela 'produtos' realizada com sucesso!</h3>";
+	} else {
+		echo "<h3>ERRO7: Erro na remoção da tabela.</h3>";
+	}
+	?>
+	</div>
 
 
 </body>
